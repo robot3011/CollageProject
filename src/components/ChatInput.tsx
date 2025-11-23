@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { Send } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Send, Mic, MicOff } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import VoiceButton from "./VoiceButton";
 import ImageGenerationButton from "./ImageGenerationButton";
-import { useVoice } from "@/hooks/useVoice";
+import { useSpeechToText } from "@/hooks/useSpeechToText";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -14,13 +13,23 @@ interface ChatInputProps {
 
 const ChatInput = ({ onSend, onGenerateImage, disabled }: ChatInputProps) => {
   const [message, setMessage] = useState("");
-  const { isListening, startListening, stopListening } = useVoice();
+  const { isListening, transcript, startListening, stopListening, clearTranscript } = useSpeechToText();
+
+  useEffect(() => {
+    if (transcript) {
+      setMessage(transcript);
+    }
+  }, [transcript]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !disabled) {
       onSend(message.trim());
       setMessage("");
+      clearTranscript();
+      if (isListening) {
+        stopListening();
+      }
     }
   };
 
@@ -31,13 +40,12 @@ const ChatInput = ({ onSend, onGenerateImage, disabled }: ChatInputProps) => {
     }
   };
 
-  const handleVoiceToggle = () => {
+  const handleMicToggle = () => {
     if (isListening) {
       stopListening();
     } else {
-      startListening((transcript) => {
-        setMessage(transcript);
-      });
+      clearTranscript();
+      startListening();
     }
   };
 
@@ -51,20 +59,32 @@ const ChatInput = ({ onSend, onGenerateImage, disabled }: ChatInputProps) => {
   return (
     <form onSubmit={handleSubmit} className="relative">
       <div className="backdrop-blur-xl bg-glass-bg border border-glass-border rounded-2xl p-2 flex gap-2 items-end">
-        <Textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask Nexus anything..."
-          disabled={disabled || isListening}
-          className="min-h-[60px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
-        />
-        <div className="flex gap-2">
-          <VoiceButton 
-            isListening={isListening} 
-            onToggle={handleVoiceToggle}
+        <div className="flex-1 relative">
+          <Textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={isListening ? "Listening..." : "Ask Nexus anything..."}
             disabled={disabled}
+            className="min-h-[60px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
           />
+          {isListening && (
+            <div className="absolute bottom-2 left-2 text-xs text-destructive font-medium animate-pulse">
+              Listening...
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            onClick={handleMicToggle}
+            disabled={disabled}
+            size="icon"
+            variant={isListening ? "destructive" : "secondary"}
+            className="rounded-xl flex-shrink-0 h-10 w-10"
+          >
+            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          </Button>
           <ImageGenerationButton 
             onGenerate={handleGenerateImage}
             disabled={disabled || !message.trim()}

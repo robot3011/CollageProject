@@ -2,13 +2,12 @@ import { useEffect, useRef } from "react";
 import HeroSection from "@/components/HeroSection";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
+import Header from "@/components/Header";
 import { useChat } from "@/hooks/useChat";
-import { useVoice } from "@/hooks/useVoice";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Index = () => {
   const { messages, sendMessage, generateImage, isLoading } = useChat();
-  const { speak } = useVoice();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,16 +16,10 @@ const Index = () => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.role === "assistant" && !isLoading) {
-      speak(lastMessage.content);
-    }
-  }, [messages, isLoading, speak]);
-
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="container max-w-4xl mx-auto px-4 py-8 flex flex-col flex-1">
+      <Header />
+      <div className="container max-w-4xl mx-auto px-4 py-8 flex flex-col flex-1 pt-20">
         {messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <HeroSection />

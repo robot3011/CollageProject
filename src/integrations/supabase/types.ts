@@ -41,6 +41,27 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_analytics: {
+        Row: {
+          id: string
+          session_id: string | null
+          user_agent: string | null
+          visited_at: string | null
+        }
+        Insert: {
+          id?: string
+          session_id?: string | null
+          user_agent?: string | null
+          visited_at?: string | null
+        }
+        Update: {
+          id?: string
+          session_id?: string | null
+          user_agent?: string | null
+          visited_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

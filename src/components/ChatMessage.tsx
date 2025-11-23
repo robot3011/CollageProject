@@ -1,5 +1,6 @@
 import { Bot, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import MessageAudioControls from "./MessageAudioControls";
 
 interface ChatMessageProps {
   role: "user" | "assistant";
@@ -39,6 +40,7 @@ const ChatMessage = ({ role, content, image }: ChatMessageProps) => {
             className="mt-3 rounded-lg max-w-full h-auto"
           />
         )}
+        {!isUser && <MessageAudioControls content={content} />}
       </div>
 
       {isUser && (
