@@ -39,22 +39,24 @@ export const useSpeechToText = () => {
     isManualStop.current = false;
     
     recognition.onresult = (event: any) => {
-      let interimTranscript = "";
-      let finalTranscript = "";
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcriptPiece = event.results[i][0].transcript;
+      let finalText = "";
+      
+      // Get all final results
+      for (let i = 0; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
-          finalTranscript += transcriptPiece + " ";
-        } else {
-          interimTranscript += transcriptPiece;
+          finalText += event.results[i][0].transcript + " ";
+        }
+      }
+      
+      // Get the latest interim result
+      if (event.results.length > 0) {
+        const lastResult = event.results[event.results.length - 1];
+        if (!lastResult.isFinal) {
+          finalText += lastResult[0].transcript;
         }
       }
 
-      setTranscript((prev) => {
-        const cleaned = prev.replace(/\s+$/, "");
-        return cleaned + " " + finalTranscript + interimTranscript;
-      });
+      setTranscript(finalText.trim());
     };
 
     recognition.onerror = (event: any) => {
