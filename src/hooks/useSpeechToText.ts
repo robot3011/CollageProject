@@ -24,11 +24,23 @@ export const useSpeechToText = () => {
     }
   }, []);
 
-  const startListening = useCallback(() => {
+  const startListening = useCallback(async () => {
     if (!recognition) {
       toast({
         title: "Not Supported",
-        description: "Voice recognition is not supported in your browser.",
+        description: "Voice recognition is not supported in your browser. Try Chrome or Edge.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Request microphone permission
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+      toast({
+        title: "Microphone Access Denied",
+        description: "Please allow microphone access in your browser settings.",
         variant: "destructive",
       });
       return;
