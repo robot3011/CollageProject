@@ -63,9 +63,20 @@ export const useSpeechToText = () => {
       console.error("Speech recognition error:", event.error);
       if (!isManualStop.current) {
         setIsListening(false);
+        
+        let errorMessage = "Failed to recognize speech. Please try again.";
+        
+        if (event.error === 'network') {
+          errorMessage = "Network error. Check your internet connection and try again.";
+        } else if (event.error === 'not-allowed') {
+          errorMessage = "Microphone access denied. Please allow microphone permissions.";
+        } else if (event.error === 'no-speech') {
+          errorMessage = "No speech detected. Please try speaking again.";
+        }
+        
         toast({
           title: "Voice Error",
-          description: "Failed to recognize speech. Please try again.",
+          description: errorMessage,
           variant: "destructive",
         });
       }
