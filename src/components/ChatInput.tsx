@@ -58,30 +58,32 @@ const ChatInput = ({ onSend, onGenerateImage, disabled }: ChatInputProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="relative">
-      <div className="backdrop-blur-xl bg-glass-bg border border-glass-border rounded-2xl p-2 flex gap-2 items-end">
+      <div className="backdrop-blur-xl bg-glass-bg border border-glass-border rounded-2xl p-3 flex gap-3 items-center">
         <div className="flex-1 relative">
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isListening ? "Listening..." : "Ask Nexus anything..."}
+            placeholder={isListening ? "🎤 Listening..." : "💬 Ask Nexus anything..."}
             disabled={disabled}
-            className="min-h-[60px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
+            className="min-h-[52px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground py-3"
           />
           {isListening && (
-            <div className="absolute bottom-2 left-2 text-xs text-destructive font-medium animate-pulse">
+            <div className="absolute bottom-3 left-2 text-xs text-primary font-medium animate-pulse flex items-center gap-1">
+              <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
               Listening...
             </div>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Button
             type="button"
             onClick={handleMicToggle}
             disabled={disabled}
             size="icon"
             variant={isListening ? "destructive" : "secondary"}
-            className="rounded-xl flex-shrink-0 h-10 w-10"
+            className="rounded-xl flex-shrink-0 h-11 w-11 transition-all hover:scale-105"
+            title={isListening ? "Stop listening" : "Start voice input"}
           >
             {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
           </Button>
@@ -93,7 +95,8 @@ const ChatInput = ({ onSend, onGenerateImage, disabled }: ChatInputProps) => {
             type="submit"
             disabled={disabled || !message.trim()}
             size="icon"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl flex-shrink-0 h-10 w-10"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl flex-shrink-0 h-11 w-11 transition-all hover:scale-105"
+            title="Send message"
           >
             <Send className="w-5 h-5" />
           </Button>
