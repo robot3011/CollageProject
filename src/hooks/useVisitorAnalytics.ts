@@ -6,6 +6,7 @@ interface VisitorRecord {
   visited_at: string;
   user_agent: string | null;
   session_id: string | null;
+  visitor_name: string | null;
 }
 
 export const useVisitorAnalytics = () => {
@@ -13,7 +14,7 @@ export const useVisitorAnalytics = () => {
   const [recentVisits, setRecentVisits] = useState<VisitorRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const trackVisit = useCallback(async () => {
+  const trackVisit = useCallback(async (visitorName?: string) => {
     try {
       const sessionId = sessionStorage.getItem("visitor_session_id") || crypto.randomUUID();
       sessionStorage.setItem("visitor_session_id", sessionId);
@@ -21,6 +22,7 @@ export const useVisitorAnalytics = () => {
       await supabase.from("visitor_analytics").insert({
         user_agent: navigator.userAgent,
         session_id: sessionId,
+        visitor_name: visitorName || null,
       });
     } catch (error) {
       console.error("Error tracking visit:", error);
@@ -49,9 +51,5 @@ export const useVisitorAnalytics = () => {
     }
   }, []);
 
-  useEffect(() => {
-    trackVisit();
-  }, [trackVisit]);
-
-  return { totalVisitors, recentVisits, isLoading, fetchAnalytics };
+  return { totalVisitors, recentVisits, isLoading, fetchAnalytics, trackVisit };
 };

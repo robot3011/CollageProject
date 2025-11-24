@@ -1,14 +1,25 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import Header from "@/components/Header";
 import { useChat } from "@/hooks/useChat";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { WelcomeDialog } from "@/components/WelcomeDialog";
+import { useVisitorAnalytics } from "@/hooks/useVisitorAnalytics";
 
 const Index = () => {
   const { messages, sendMessage, generateImage, isLoading } = useChat();
+  const { trackVisit } = useVisitorAnalytics();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
+
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem("visitor_session_id");
+    if (!hasVisited) {
+      setShowWelcomeDialog(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -16,8 +27,14 @@ const Index = () => {
     }
   }, [messages]);
 
+  const handleNameSubmit = async (name: string) => {
+    await trackVisit(name);
+    setShowWelcomeDialog(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <WelcomeDialog open={showWelcomeDialog} onSubmit={handleNameSubmit} />
       <Header />
       <div className="container max-w-4xl mx-auto px-4 py-8 flex flex-col flex-1 pt-20">
         {messages.length === 0 ? (
