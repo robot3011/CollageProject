@@ -55,14 +55,14 @@ const Header = () => {
                       key={visit.id}
                       className="text-xs p-2 rounded bg-muted/50"
                     >
-                      <div className="font-medium">
-                        {new Date(visit.visited_at).toLocaleString()}
-                      </div>
-                      {visit.session_id && (
-                        <div className="text-muted-foreground truncate">
-                          Session: {visit.session_id.slice(0, 8)}...
+                      {visit.visitor_name && (
+                        <div className="font-semibold text-sm mb-1">
+                          {visit.visitor_name}
                         </div>
                       )}
+                      <div className="font-medium text-muted-foreground">
+                        {new Date(visit.visited_at).toLocaleString()}
+                      </div>
                     </div>
                   ))}
                 </div>

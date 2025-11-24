@@ -47,18 +47,21 @@ export type Database = {
           session_id: string | null
           user_agent: string | null
           visited_at: string | null
+          visitor_name: string | null
         }
         Insert: {
           id?: string
           session_id?: string | null
           user_agent?: string | null
           visited_at?: string | null
+          visitor_name?: string | null
         }
         Update: {
           id?: string
           session_id?: string | null
           user_agent?: string | null
           visited_at?: string | null
+          visitor_name?: string | null
         }
         Relationships: []
       }
